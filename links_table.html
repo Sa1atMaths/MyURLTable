@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quick Links — Table Buttons</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f4f6f8}
+    .card{width:min(880px,95%);background:white;border-radius:12px;box-shadow:0 6px 20px rgba(16,24,40,0.08);padding:18px}
+    h1{margin:0 0 10px;font-size:20px}
+    p{margin:0 0 18px;color:#555}
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    thead th{display:none}
+    tr.button-row{cursor:pointer;border-radius:10px;transition:transform .08s ease,box-shadow .08s}
+    tr.button-row td{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:14px 18px;border-radius:10px;border:1px solid rgba(16,24,40,0.06);box-shadow:0 1px 0 rgba(255,255,255,0.6) inset}
+    tr.button-row:focus-within, tr.button-row:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,24,40,0.06)}
+    .title{font-weight:600}
+    .url{font-size:13px;color:#486581;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+    /* Make each row accessible as a button */
+    tr.button-row[role="button"]{outline:none}
+    tr.button-row:focus{box-shadow:0 0 0 4px rgba(99,102,241,0.12)}
+    .small{font-size:12px;color:#666}
+    .actions{display:flex;gap:8px;justify-content:flex-end}
+    .open-btn{padding:8px 12px;border-radius:8px;border:0;background:#2563eb;color:white;font-weight:600;cursor:pointer}
+    .open-btn:focus{outline:3px solid rgba(37,99,235,0.18)}
+    @media (max-width:520px){
+      .url{display:none}
+      .open-btn{padding:6px 8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Quick Links</h1>
+    <p>Click any row to open the link (or press Enter/Space when focused).</p>
+
+    <table aria-label="Quick links table">
+      <thead>
+        <tr><th>Title</th><th>URL</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr class="button-row" role="button" tabindex="0" data-href="https://docs.google.com/spreadsheets/d/1dJUSe6UWLL_9-4Y48a2SpFTEwIaI_hINApCHc2xH67U/edit?gid=0#gid=0">
+          <td>
+            <div class="title">Marks Sheets</div>
+            <div class="small url">docs.google.com/spreadsheets/d/1dJUSe6U.../edit</div>
+          </td>
+          <td></td>
+          <td class="actions"><button class="open-btn" data-action="open">Open</button></td>
+        </tr>
+
+        <tr class="button-row" role="button" tabindex="0" data-href="https://us06web.zoom.us/j/83321668870?pwd=mZ6hyCxK3F6Xpdj484KKVM1Fv3TCy0.1">
+          <td>
+            <div class="title">ZOOM</div>
+            <div class="small url">us06web.zoom.us/j/83321668870?pwd=...</div>
+          </td>
+          <td></td>
+          <td class="actions"><button class="open-btn" data-action="open">Open</button></td>
+        </tr>
+
+        <tr class="button-row" role="button" tabindex="0" data-href="https://docs.google.com/forms/u/3/d/e/1FAIpQLSdDyy_499Bf2WNxzNzCQBGnAIVWUGKfyKCu8Ja-C0Q5wrY7Sg/viewform">
+          <td>
+            <div class="title">Attendance</div>
+            <div class="small url">docs.google.com/forms/u/3/d/e/1FAIpQLSdDyy_499Bf...</div>
+          </td>
+          <td></td>
+          <td class="actions"><button class="open-btn" data-action="open">Open</button></td>
+        </tr>
+
+        <tr class="button-row" role="button" tabindex="0" data-href="https://docs.google.com/forms/u/2/d/e/1FAIpQLSdDyy_499Bf2WNxzNzCQBGnAIVWUGKfyKCu8Ja-C0Q5wrY7Sg/viewform">
+          <td>
+            <div class="title">Attendance PC</div>
+            <div class="small url">docs.google.com/forms/u/2/d/e/1FAIpQLSdDyy_499Bf...</div>
+          </td>
+          <td></td>
+          <td class="actions"><button class="open-btn" data-action="open">Open</button></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Open link in new tab (or same tab if popup blocked)
+    function openLink(url){
+      const w = window.open(url, '_blank');
+      if(!w) window.location.href = url; // fallback
+    }
+
+    // Row click handler
+    document.querySelectorAll('tr.button-row').forEach(row => {
+      const href = row.dataset.href;
+      // Click anywhere on the row
+      row.addEventListener('click', (e) => {
+        // If the actual button was clicked, still open (button has same data-action)
+        openLink(href);
+      });
+
+      // Make Enter/Space open the link for keyboard users
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openLink(href);
+        }
+      });
+
+      // The small "Open" button also opens the link and stops event bubbling to avoid double open
+      const btn = row.querySelector('button.open-btn');
+      if(btn){
+        btn.addEventListener('click', (ev) => { ev.stopPropagation(); openLink(href); });
+      }
+    });
+  </script>
+</body>
+</html>
